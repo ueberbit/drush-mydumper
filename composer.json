@@ -1,0 +1,12 @@
+{
+    "name": "ueberbit/drush-mydumper",
+    "type": "drupal-drush",
+    "autoload": {
+        "psr-4": {
+            "Ueberbit\\DrushMydumper\\": "src/"
+        }
+    },
+    "require": {
+        "drush/drush": "^13.3"
+    }
+}
