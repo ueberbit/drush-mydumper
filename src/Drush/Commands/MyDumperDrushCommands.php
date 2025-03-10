@@ -19,6 +19,7 @@ use Drush\Sql\SqlMysql;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
+#[CLI\Bootstrap(DrupalBootLevels::NONE)]
 class MyDumperDrushCommands extends DrushCommands {
 
   use AutowireTrait;
