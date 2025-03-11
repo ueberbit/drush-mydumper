@@ -77,10 +77,8 @@ class MyDumperDrushCommands extends DrushCommands {
     $cmd = [
       'mydumper',
     ];
-    $creds = explode(' ', $sql->creds());
-    $args = [
-      '--dirty',
-    ];
+    $creds = $this->convertCommandLineParameters(explode(' ', $sql->creds()));
+    $args = [];
     if (isset($options['directory'])) {
       $args[] = '--outputdir=' . $options['directory'];
     }
@@ -103,7 +101,7 @@ class MyDumperDrushCommands extends DrushCommands {
       $cmd = [
         'mydumper',
       ];
-      $creds = explode(' ', $sql->creds());
+      $creds = $this->convertCommandLineParameters(explode(' ', $sql->creds()));
       $args = [
         '--dirty',
         '--outputdir=' . $options['directory'],
@@ -151,7 +149,7 @@ class MyDumperDrushCommands extends DrushCommands {
     $cmd = [
       'myloader',
     ];
-    $creds = explode(' ', $sql->creds());
+    $creds = $this->convertCommandLineParameters(explode(' ', $sql->creds()));
     $args = [
       '--directory=' . $options['directory'],
     ];
@@ -205,6 +203,30 @@ class MyDumperDrushCommands extends DrushCommands {
       $content = array_merge($content, [$group], $lines, ['']);
     }
     return implode(PHP_EOL, $content);
+  }
+
+  protected function convertCommandLineParameters(array $parameters): array {
+    $replace = [
+      '--ssl-ca=' => '--ca=',
+      '--ssl-capath=' => '--capath=',
+      '--ssl-cert=' => '--cert=',
+      '--ssl-cipher=' => '--cipher=',
+      '--ssl-key=' => '--key=',
+    ];
+    $sslEnabled = FALSE;
+    $parameters = array_map(function ($argument) use ($replace, &$sslEnabled) {
+      $result = str_replace(array_keys($replace), array_values($replace), $argument, $count);
+      if ($count > 0) {
+        $sslEnabled = TRUE;
+      }
+      return $result;
+    }, $parameters);
+
+    if ($sslEnabled) {
+      $parameters[] = '--ssl';
+    }
+
+    return $parameters;
   }
 
 }
