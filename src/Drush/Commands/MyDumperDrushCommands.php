@@ -41,7 +41,11 @@ class MyDumperDrushCommands extends DrushCommands {
   #[CLI\Option(name: 'target', description: 'The name of a target within the specified database connection.')]
   #[CLI\OptionsetTableSelection]
   #[CLI\FieldLabels(labels: ['path' => 'Path'])]
-  public function mydumper($options = ['directory' => self::REQ, 'format' => 'null']) : PropertyList {
+  public function mydumper($options = [
+    'directory' => self::REQ,
+    'format' => 'null',
+  ]
+  ): PropertyList {
     if ($options['tables-key'] !== NULL) {
       throw new InvalidArgumentException('--tables-key option is not supported.');
     }
@@ -121,7 +125,8 @@ class MyDumperDrushCommands extends DrushCommands {
     }
 
     // SqlBase::dump() returns null if 'result-file' option is empty.
-    $this->logger()->success(dt('Database dump saved to !path', ['!path' => $options['directory']]));
+    $this->logger()
+      ->success(dt('Database dump saved to !path', ['!path' => $options['directory']]));
     return new PropertyList(['path' => $options['directory']]);
   }
 
