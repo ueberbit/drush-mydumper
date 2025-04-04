@@ -39,9 +39,11 @@ class MyDumperDrushCommands extends DrushCommands {
   #[CLI\Option(name: 'directory', description: "The output directory")]
   #[CLI\Option(name: 'database', description: 'The DB connection key if using multiple connections in settings.php.')]
   #[CLI\Option(name: 'target', description: 'The name of a target within the specified database connection.')]
+  #[CLI\Option(name: 'gzip', description: 'Compress the dump using the gzip program which must be in your <info>$PATH</info>.')]
+  #[CLI\Argument(name: 'extra', description: 'Additional parameters, passed to mydumper.')]
   #[CLI\OptionsetTableSelection]
   #[CLI\FieldLabels(labels: ['path' => 'Path'])]
-  public function mydumper($options = [
+  public function mydumper(array $extra, $options = [
     'directory' => self::REQ,
     'format' => 'null',
   ]
@@ -89,7 +91,10 @@ class MyDumperDrushCommands extends DrushCommands {
     if (isset($excludeFile)) {
       $args[] = '--omit-from-file=' . $excludeFile;
     }
-    $cmd = array_merge($cmd, $creds, $args);
+    if (isset($options['gzip'])) {
+      $args[] = '--compress';
+    }
+    $cmd = array_merge($cmd, $creds, $args, $extra);
     $process = $this->processManager()->process($cmd);
 
     // Avoid the php memory of saving stdout.
@@ -112,7 +117,10 @@ class MyDumperDrushCommands extends DrushCommands {
         '--tables-list=' . implode(',', $tableList),
         '--no-data',
       ];
-      $cmd = array_merge($cmd, $creds, $args);
+      if (isset($options['gzip'])) {
+        $args[] = '--compress';
+      }
+      $cmd = array_merge($cmd, $creds, $args, $extra);
       $process = $this->processManager()->process($cmd);
       // Avoid the php memory of saving stdout.
       // Show dump in real-time on stdout, for backward compat.
