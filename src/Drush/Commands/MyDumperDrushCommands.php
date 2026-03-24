@@ -143,7 +143,8 @@ class MyDumperDrushCommands extends DrushCommands {
   #[CLI\Option(name: 'directory', description: "The output directory")]
   #[CLI\Option(name: 'database', description: 'The DB connection key if using multiple connections in settings.php.')]
   #[CLI\Option(name: 'target', description: 'The name of a target within the specified database connection.')]
-  public function myloader($options = ['directory' => self::REQ]) {
+  #[CLI\Argument(name: 'extra', description: 'Additional parameters, passed to myloader.')]
+  public function myloader(array $extra, $options = ['directory' => self::REQ]) {
     if ($options['database'] === FALSE) {
       unset($options['database']);
     }
@@ -167,7 +168,7 @@ class MyDumperDrushCommands extends DrushCommands {
       '--directory=' . $options['directory'],
     ];
 
-    $cmd = array_merge($cmd, $creds, $args);
+    $cmd = array_merge($cmd, $creds, $args, $extra);
     $process = $this->processManager()->process($cmd);
 
     // Avoid the php memory of saving stdout.
